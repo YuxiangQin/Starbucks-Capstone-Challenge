@@ -2,10 +2,14 @@
 Project using Starbucks offer dataset
 
 # Installation
-Pending
+packages needed to run the scripts:
+- heapq
+- sqlalchemy
+- xgboost
+- sklearn
 
 ## Instructions:
-1. Run the following commands in the project's root directory to set up your database and model.
+Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
         `python data/process_data.py data/portfolio.json data/profile.json data/transcript.json data/customer_offer_data.db data/customer_trans_agg.db`
@@ -28,3 +32,6 @@ Accuracy Score: This metric will serve as an indicator of the overall correctnes
 F-score: Given the nature of the problem, we will use the F-score to strike a balance between precision and recall. This is particularly important in scenarios where precision (delivering relevant offers) and recall (capturing all potential responders) need careful consideration.
 
 By employing these metrics, we aim to refine Starbucks' promotional strategy, ensuring that offers are not only personalized but also highly relevant to individual customers. This, in turn, will contribute to a more engaging and rewarding experience on the Starbucks Rewards mobile app.
+
+# Analysis
+Analysis contained in Starbucks_Capstone_notebook.ipynb
