@@ -33,7 +33,7 @@ def train_and_evaluate_models(X, y):
     - XGBoost Classifier: n_estimators, max_depth, learning_rate
     '''
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Preprocess the data - scaling is often important for some models
     scaler = StandardScaler()
@@ -41,22 +41,31 @@ def train_and_evaluate_models(X, y):
     X_test_scaled = scaler.transform(X_test)
 
     # Logistic Regression
+    print("Grid searching Logistic Regression Models")
     lr_param_grid = {'C': [0.001, 0.01, 0.1, 1, 10, 100]}
     lr_model = LogisticRegression()
-    lr_grid_search = GridSearchCV(lr_model, lr_param_grid, cv=5, scoring='f1', verbose=1, n_jobs=-1)
+    lr_grid_search = GridSearchCV(lr_model, lr_param_grid, cv=5, scoring='f1', n_jobs=-1)
     lr_grid_search.fit(X_train_scaled, y_train)
+    print("Best Logistic Regression Estimator:")
+    print(lr_grid_search.best_estimator_)
 
     # Random Forest
+    print("Grid searching Random Forest Models")
     rf_param_grid = {'n_estimators': [50, 100, 150], 'max_depth': [None, 10, 20], 'min_samples_split': [2, 5, 10]}
     rf_model = RandomForestClassifier()
-    rf_grid_search = GridSearchCV(rf_model, rf_param_grid, cv=5, scoring='f1', verbose=1, n_jobs=-1)
+    rf_grid_search = GridSearchCV(rf_model, rf_param_grid, cv=5, scoring='f1', n_jobs=-1)
     rf_grid_search.fit(X_train_scaled, y_train)
+    print("Best Random Forest Estimator:")
+    print(rf_grid_search.best_estimator_)
 
     # XGBoost
-    xgb_param_grid = {'n_estimators': [50, 100, 150], 'max_depth': [3, 5, 7], 'learning_rate': [0.01, 0.1, 0.2]}
+    print("Grid searching XGBoost Models")
+    xgb_param_grid = {'n_estimators': [100, 150, 200], 'max_depth': [5, 7, 10], 'learning_rate': [0.1, 0.2, 0.3]}
     xgb_model = XGBClassifier()
-    xgb_grid_search = GridSearchCV(xgb_model, xgb_param_grid, cv=5, scoring='f1', verbose=1, n_jobs=-1)
+    xgb_grid_search = GridSearchCV(xgb_model, xgb_param_grid, cv=5, scoring='f1', n_jobs=-1)
     xgb_grid_search.fit(X_train_scaled, y_train)
+    print("Best XGBoost Estimator:")
+    print(xgb_grid_search.best_estimator_)
 
     # Evaluate models
     models = {
