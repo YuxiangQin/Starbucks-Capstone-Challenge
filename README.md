@@ -68,8 +68,16 @@ The exploratory data analysis revealed the following key findings:
 - A Priority Queue (PQ) was used to manage the impact of offers on user transactions.
 
 ## Modeling
-
-Three models were considered for binary classification:
+### Initial Solution
+Used Random Forest Classifier without hyperparameter tune, result on test set:
+Accuracy: 0.67
+F1 Score: 0.59
+### Model Improvements
+Accuracy Socre for trainning set was 0.96, showing a strong overfitting, which is common in
+Random Forest models, so leveraging hyperparameter tune to reduce overfitting impact,
+also include more models to find best solution.
+#### Use multiple models
+Try more models and pick the best performer, three models were considered:
 
 1. **Logistic Regression**
 2. **Random Forest Classifier**
@@ -77,7 +85,7 @@ Three models were considered for binary classification:
 
 A pipeline was used for each model, including preprocessing steps such as scaling.
 
-## Hyperparameter Tuning
+#### Hyperparameter Tuning
 
 GridSearchCV was employed for hyperparameter tuning. The following parameters were tuned for each model:
 
@@ -87,26 +95,12 @@ GridSearchCV was employed for hyperparameter tuning. The following parameters we
 
 ## Results
 
-Achieved metrics for each model on the test set:
+Best estimators' for each model:
+- Logistic Regression (C=1)
+- Random Forest Classifier (n_estimators=150, max_depth=20, min_samples_split=10):
+- XGBoost Classifier (n_estimators=200, max_depth=7, learning_rate=0.2):
 
-### Logistic Regression:
-- Accuracy: 0.65
-- F1 Score: 0.54
-- ROC-AUC Score: 0.63
-
-### Random Forest Classifier:
-- Accuracy: 0.69
-- F1 Score: 0.61
-- ROC-AUC Score: 0.67
-
-### XGBoost Classifier:
-- Accuracy: 0.70
-- F1 Score: 0.62
-- ROC-AUC Score: 0.69
-
-The F1 score and ROC-AUC score provide insights into the predictive capabilities and discrimination power of each model on the given test set.
-
-## Comparison Table
+### Comparison Table (metrics on test set)
 
 | Model                   | Accuracy | F1 Score | ROC-AUC Score |
 |-------------------------|----------|----------|---------------|
@@ -114,9 +108,30 @@ The F1 score and ROC-AUC score provide insights into the predictive capabilities
 | Random Forest Classifier| 0.69     | 0.61     | 0.67          |
 | XGBoost Classifier      | 0.70     | 0.62     | 0.69          |
 
+XGBoost performes the best, based on f1-score.
+XGBoost and Random Forest are better than Logistic Regression, due to ensemble models take advantage of numbers of simple models, in general it could result in better results. However, it'll require more resource to train the models.
+To determine tuning hyperparameter value list, created train set and test set f1-score change plot for each
+hyperparameter, in this way we'll know a reasonable range to select best possible hyperparameter values.
+n_estimators, max_depth and learning_rate all helped find a balance between variance and bias, with less estimators, less max_depth, larger learning_rate would reduce model's complexity.  
+The F1 score and ROC-AUC score provide insights into the predictive capabilities and discrimination power of each model on the given test set.
+
 ## Conclusion
 
-In conclusion, the XGBoost Classifier demonstrated the best performance based on the F1 score among the evaluated models. The project successfully addressed the binary classification problem, providing insights into user response to offers.
+In conclusion, in order to better understand customers behavior when receiving offers, we determine to leverage existing data to build a binary classification model, to predict customer's respond on certain offer.
+
+### Key Findings
+The analysis revealed several key findings:
+- Customers aged over 40 tend to be more responsive to offers, which means completing discount/buy one get one free offers or making transactions under the influence of informational offers.
+- Comparing customer behavior with and without offers, individuals between 20 and 30 years old make more purchases when they receive offers.
+
+### Extensive Data Cleaning
+The data cleaning process was comprehensive, addressing various scenarios to ensure the dataset accurately reflects real-world situations. Noteworthy details include:
+
+- Iterative Solution: Adopting an iterative approach to iterate through each row of the training data, resulting in a more accurate dataset.
+- Offer Types: For each customer, we considered three types of offers:
+  1. **Non-Informational Offer:** Straightforward to assess; a response is confirmed if `offer_complete_time >= offer_view_time`.
+  2. **Informational Offer:** Required checking if a transaction occurred during the offer's impact duration. We also considered the presence of concurrent non-informational offers, assuming a transaction is more influenced by the non-informational offer in such cases.
+  3. **No Offer:** Examined whether a customer's transaction occurred without any offer impact, providing insights into their behavior without offers.
 
 ## Improvements
 
